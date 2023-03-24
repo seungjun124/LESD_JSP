@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="user.UserDAO" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,6 +13,30 @@
 <link rel="stylesheet" href="./css/custom.css">
 </head>
 <body>
+<%
+	String userID = null;
+	if(session.getAttribute("userID") != null) {
+		userID = (String)session.getAttribute("userID");
+	}
+	if(userID == null) {
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('로그인을 해주세요.')");
+		script.println("location.href = 'userLogin.jsp';");
+		script.println("</script>");
+		script.close();
+		return;
+	}
+	boolean emailChecked = new UserDAO().getUserEmailChecked(userID);
+	if(emailChecked == false) {
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("location.href = 'emailSendConfirm.jsp';");
+		script.println("</script>");
+		script.close();
+		return;
+	}
+%>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
       <a class="navbar-brand" href="index.jsp">강의평가 웹 사이트</a>
@@ -40,25 +66,35 @@
             </a>
 
             <div class="dropdown-menu" aria-labelledby="dropdown">
+            
+            <%
+            	if(userID == null) {
+            %>
 
               <a class="dropdown-item" href="userLogin.jsp">로그인</a>
 
               <a class="dropdown-item" href="userRegister.jsp">회원가입</a>
+              
+              <%
+            	} else {
+              %>
 
               <a class="dropdown-item" href="userLogout.jsp">로그아웃</a>
+             
+             <%
+            	}
+             %>
 
             </div>
+           
 
           </li>
 
         </ul>
 
         <form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
-
           <input type="text" name="search" class="form-control mr-sm-2" placeholder="내용을 입력하세요.">
-
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
-
         </form>
 
       </div>

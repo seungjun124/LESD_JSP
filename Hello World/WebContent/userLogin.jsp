@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ page import="java.io.PrintWriter" %>
+    <%@ page import="user.UserDAO" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,6 +13,21 @@
 <link rel="stylesheet" href="./css/custom.css">
 </head>
 <body>
+<%
+	String userID = null;
+	if(session.getAttribute("userID") != null) {
+		userID = (String)session.getAttribute("userID");
+	}
+	if(userID != null) {
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('로그인이 된 상태입니다.')");
+		script.println("location.href = 'index.jsp';");
+		script.println("</script>");
+		script.close();
+		return;
+	}
+%>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
       <a class="navbar-brand" href="index.jsp">강의평가 웹 사이트</a>
@@ -25,7 +42,7 @@
 
         <ul class="navbar-nav mr-auto">
 
-          <li class="nav-item">
+          <li class="nav-item active">
 
             <a class="nav-link" href="index.jsp">메인</a>
 
@@ -40,14 +57,27 @@
             </a>
 
             <div class="dropdown-menu" aria-labelledby="dropdown">
+            
+            <%
+            	if(userID == null) {
+            %>
 
-              <a class="dropdown-item active" href="userLogin.jsp">로그인</a>
+              <a class="dropdown-item" href="userLogin.jsp">로그인</a>
 
               <a class="dropdown-item" href="userRegister.jsp">회원가입</a>
+              
+              <%
+            	} else {
+              %>
 
               <a class="dropdown-item" href="userLogout.jsp">로그아웃</a>
+             
+             <%
+            	}
+             %>
 
             </div>
+           
 
           </li>
 
